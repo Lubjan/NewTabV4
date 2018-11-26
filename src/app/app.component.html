@@ -1,20 +1,132 @@
-<!--The content below is only a placeholder and can be replaced.-->
-<div style="text-align:center">
-  <h1>
-    Welcome to {{ title }}!
-  </h1>
-  <img width="300" alt="Angular Logo" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNTAgMjUwIj4KICAgIDxwYXRoIGZpbGw9IiNERDAwMzEiIGQ9Ik0xMjUgMzBMMzEuOSA2My4ybDE0LjIgMTIzLjFMMTI1IDIzMGw3OC45LTQzLjcgMTQuMi0xMjMuMXoiIC8+CiAgICA8cGF0aCBmaWxsPSIjQzMwMDJGIiBkPSJNMTI1IDMwdjIyLjItLjFWMjMwbDc4LjktNDMuNyAxNC4yLTEyMy4xTDEyNSAzMHoiIC8+CiAgICA8cGF0aCAgZmlsbD0iI0ZGRkZGRiIgZD0iTTEyNSA1Mi4xTDY2LjggMTgyLjZoMjEuN2wxMS43LTI5LjJoNDkuNGwxMS43IDI5LjJIMTgzTDEyNSA1Mi4xem0xNyA4My4zaC0zNGwxNy00MC45IDE3IDQwLjl6IiAvPgogIDwvc3ZnPg==">
+<div class="ntNavbar">
+  <div class="ntLogo">NEWTAB</div>
+  <div class="ntNavButtons" (mouseleave)="languageDropdown = false; twitchDropdown = false">
+    <button class="ntTwitchLogin" (click)="authTwitch()" *ngIf="!twitchAccount">{{langua.g('connectTwitch')}}</button>
+    <button class="ntTwitchAvatar" *ngIf="twitchAccount" [style.backgroundImage]="'url('+twitchAccount.logo+')'" (click)="twitchDropdown = !twitchDropdown">
+      <div class="ntDropdown" [class.visible]="twitchDropdown">
+        <button class="ntSelectableValue" (click)="twitchLogout()">{{langua.g('twitch_logout')}}</button>
+      </div>
+    </button>
+    <!-- <button class="ntYouTubeLogin">{{langua.g('connectYouTube')}}</button> -->
+    <button class="ntLanguageSelector" (click)="languageDropdown = !languageDropdown">
+      <div class="ntSelectedLanguage">{{langua.availableDetail[langua.current].id | uppercase}}</div>
+      <div class="ntDropdown" [class.visible]="languageDropdown">
+        <button class="ntSelectableValue" [class.selected]="langua.current === lang.id" *ngFor="let lang of langua.available | orderBy:['display']" (click)="langua.setLang(lang.id); languageDropdown = false">{{lang.display}}</button>
+      </div>
+    </button>
+    <button class="ntTheme" (click)="toggleTheme()"></button>
+  </div>
 </div>
-<h2>Here are some links to help you start: </h2>
-<ul>
-  <li>
-    <h2><a target="_blank" rel="noopener" href="https://angular.io/tutorial">Tour of Heroes</a></h2>
-  </li>
-  <li>
-    <h2><a target="_blank" rel="noopener" href="https://github.com/angular/angular-cli/wiki">CLI Documentation</a></h2>
-  </li>
-  <li>
-    <h2><a target="_blank" rel="noopener" href="https://blog.angular.io/">Angular blog</a></h2>
-  </li>
-</ul>
 
+<div class="ntBody">
+  <div class="ntContainer">
+    <div class="ntContainerTitle">{{langua.g('bookmarks')}}</div>
+    <button class="ntOptionButton" (click)="bookmarkCreation = true">
+      <i class="material-icons">add</i>
+    </button>
+    <div class="ntBlockList" *ngIf="bookmarks.length">
+      <a class="ntBookmark" [href]="bookmark.link" *ngFor="let bookmark of bookmarks; let i = index">
+        <div class="ntBookmarkInfo">
+          <div class="ntBookmarkTitle">{{bookmark.title}}</div>
+          <div class="ntBookmarkLink">{{bookmark.link | uppercase}}</div>
+        </div>
+        <div class="ntBookmarkOptions">
+          <button (click)="bookmarkEdit($event, i)" class="ntBookmarkOptionButton">
+            <i class="material-icons">settings</i>
+          </button>
+          <button (click)="bookmarkRemove($event, i)" class="ntBookmarkOptionButton">
+            <i class="material-icons">remove</i>
+          </button>
+        </div>
+      </a>
+    </div>
+    <div class="ntNote" *ngIf="!bookmarks.length">{{langua.g('no_bookmarks')}}</div>
+  </div>
+
+  <div class="ntContainer">
+    <div class="ntContainerTitle">{{langua.g('streams')}}</div>
+    <!-- sort by: [created_at|channel.display_name] -->
+    <div class="ntBlockList" *ngIf="streams.length">
+      <!-- <pre>
+      {{streams|json}}
+      </pre> -->
+      <div class="ntStreamPreview" *ngFor="let streamer of streams">
+        <a class="ntStreamPreviewImage" [style.backgroundImage]="'url('+streamer.stream.preview.large+')'" [href]="streamer.stream.channel.url"></a>
+        <div class="ntstreamInfoOverlay">
+          <div class="ntStreamerInfo">
+            <div class="ntStreamerLogo" [style.backgroundImage]="'url('+streamer.stream.channel.logo+')'"></div>
+            <div class="ntStreamerDisplayName">{{streamer.stream.channel.display_name}}</div>
+          </div>
+        </div>
+        <div class="ntStreamInfo">
+          <div class="ntStreamInfoActions">
+            <button class="ntStreamPopup" (click)="popoutStream(streamer.stream.channel.name)">{{langua.g('stream_popup_stream')}}</button>
+            <button class="ntChatPopup" (click)="popoutChat(streamer.stream.channel.name)">{{langua.g('stream_popup_chat')}}</button>
+          </div>
+          <div class="ntStreamStatus">
+            <b>{{streamer.stream.channel.status}}</b>
+          </div>
+          <div class="ntStreamViewerCount">
+            <i class="material-icons">people_outline</i>
+            <b>{{streamer.stream.viewers}}</b>
+          </div>
+          <div class="ntStreamGameInfo">
+            <i class="material-icons">videogame_asset</i>
+            <b>{{streamer.stream.channel.game}}</b>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="ntNote" *ngIf="!twitchAccount">{{langua.g('no_twitch')}}</div>
+    <div class="ntNote" *ngIf="twitchAccount && !streams.length">{{langua.g('no_streams')}}</div>
+  </div>
+</div>
+
+<div class="ntPopup" [class.visible]="bookmarkCreation">
+  <button class="ntPopupClose" (click)="bookmarkCreation = false">
+    <i class="material-icons">close</i>
+  </button>
+  <div class="ntPopupBody">
+    <div class="ntPopupTitle">{{langua.g('add_new_bookmark')}}</div>
+    <div class="ntPopupForm">
+      <div class="ntPopupFieldSet">
+        <label for="bookmarkTitle" [class.ng-invalid]="bookmarkTitle.invalid" title="{{langua.g('required')}}" class="ntPopupLabel">{{langua.g('new_bookmark_title')}}</label>
+        <input class="ntPopupInput" type="text" #bookmarkTitle="ngModel" id="bookmarkTitle" required maxlength="32" [(ngModel)]="bookmark.title">
+      </div>
+      <div class="ntPopupFieldSet">
+        <label for="bookmarkLink" [class.ng-invalid]="bookmarkLink.invalid" title="{{langua.g('required')}}" class="ntPopupLabel">{{langua.g('new_bookmark_link')}}</label>
+        <input class="ntPopupInput" type="text" #bookmarkLink="ngModel" id="bookmarkLink" required [(ngModel)]="bookmark.link">
+      </div>
+      <div class="ntPopupControls">
+        <button class="ntPopupButton cancel" (click)="bookmarkCreation = false">{{langua.g('popup_cancel')}}</button>
+        <button class="ntPopupButton" [disabled]="bookmarkTitle.invalid || bookmarkLink.invalid" (click)="createBookmark()">{{langua.g('popup_confirm')}}</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="ntPopup" [class.visible]="bookmarkEditing">
+  <button class="ntPopupClose" (click)="bookmarkEditing = false">
+    <i class="material-icons">close</i>
+  </button>
+  <div class="ntPopupBody">
+    <pre>
+      {{bookmark|json}}
+    </pre>
+    <div class="ntPopupTitle">{{langua.g('edit_bookmark')}}</div>
+    <div class="ntPopupForm">
+      <div class="ntPopupFieldSet">
+        <label for="bookmarkTitle" [class.ng-invalid]="bookmarkTitle.invalid" title="{{langua.g('required')}}" class="ntPopupLabel">{{langua.g('new_bookmark_title')}}</label>
+        <input class="ntPopupInput" type="text" #bookmarkTitle="ngModel" id="bookmarkTitle" required maxlength="32" [(ngModel)]="bookmark.title">
+      </div>
+      <div class="ntPopupFieldSet">
+        <label for="bookmarkLink" [class.ng-invalid]="bookmarkLink.invalid" title="{{langua.g('required')}}" class="ntPopupLabel">{{langua.g('new_bookmark_link')}}</label>
+        <input class="ntPopupInput" type="text" #bookmarkLink="ngModel" id="bookmarkLink" required [(ngModel)]="bookmark.link">
+      </div>
+      <div class="ntPopupControls">
+        <button class="ntPopupButton cancel" (click)="bookmarkEditing = false">{{langua.g('popup_cancel')}}</button>
+        <button class="ntPopupButton" [disabled]="bookmarkTitle.invalid || bookmarkLink.invalid" (click)="saveEditBookmark()">{{langua.g('popup_confirm')}}</button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,1 +1,939 @@
-/* You can add global styles to this file, and also import other style files */
+@import 'https://fonts.googleapis.com/css?family=Poppins:100,200,300,400,500,600,700,800,900';
+@import 'https://fonts.googleapis.com/icon?family=Material+Icons';
+
+.material-icons
+{
+    font-size: 1.125em;
+    display: inline-block;
+}
+
+:root
+{
+    --transition: all ease .4s;
+
+    --darkLight: #4d4d4d;
+    --dark: #151515;
+    --darkDark: #000;
+
+    --lightLight: #fff;
+    --light: #f4f4f4;
+    --lightDark: #eaeaea;
+
+    --red: #c92246;
+
+    --poppins: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+
+::-webkit-scrollbar
+{
+    width: 6px;
+    height: 6px;
+}
+
+::-webkit-scrollbar-track
+{
+    background: var(--dark); 
+}
+
+::-webkit-scrollbar-thumb
+{
+    background: var(--lightDark); 
+}
+
+::-webkit-scrollbar-thumb:hover
+{
+    background: var(--lightLight); 
+}
+
+*,
+:before,
+:after
+{
+    box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+}
+
+html,
+body
+{
+    margin: 0;
+    padding: 0;
+    font-family: var(--poppins);
+    font-weight: 400;
+}
+
+body,
+app-root
+{
+    transition: var(--transition);
+    background: var(--dark);
+    color: var(--light);
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    flex-flow: wrap;
+}
+
+.ntNavbar
+{
+    transition: var(--transition);
+    display: flex;
+    width: 100%;
+    border-bottom: 1px solid var(--lightLight);
+    background: var(--dark);
+}
+
+.ntLogo
+{
+    user-select: none;
+    transition: var(--transition);
+    margin-bottom: -1px;
+    font-family: var(--poppins);
+    font-weight: 100;
+    line-height: 65px;
+    color: var(--darkDark);
+    background: var(--lightLight);
+    font-size: 1.85em;
+    letter-spacing: .05em;
+    width: 200px;
+    display: inline-flex;
+    justify-content: center;
+}
+
+.ntNavButtons
+{
+    margin-left: auto;
+    display: inline-flex;
+    align-items: center;
+    padding: 0 15px;
+}
+
+.ntNavButtons > button
+{
+    user-select: none;
+    transition: var(--transition);
+    display: inline-flex;
+    padding: 0 8px;
+    height: 35px;
+    align-items: center;
+    font-family: var(--poppins);
+    font-weight: 600;
+    border: 2px solid var(--light);
+    position: relative;
+    background: transparent;
+    color: var(--light);
+    outline: none;
+    cursor: pointer;
+    text-transform: uppercase;
+    font-size: 16px;
+}
+
+.ntNavButtons > button:hover,
+.ntNavButtons > button:focus
+{
+    transition: var(--transition);
+    border-color: var(--lightLight);
+    color: var(--lightLight);
+}
+
+.ntNavButtons > button + button
+{
+    margin-left: 5px;
+}
+
+.ntTwitchLogin:before
+{
+    transition: var(--transition);
+    content: '';
+    background-image: url('/assets/Glitch_White_Screen/Glitch_White_RGB.svg');
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+    margin-right: 4px;
+    height: 16px;
+    width: 16px;
+}
+
+.ntTheme
+{
+    width: 35px;
+    overflow: hidden;
+    background: var(--dark);
+}
+
+.ntTheme:before
+{
+    transition: var(--transition);
+    content: '';
+    position: absolute;
+    top: 30%;
+    left: 30%;
+    right: -75%;
+    bottom: -75%;
+    background-color: var(--light);
+    transform: rotate(45deg);
+}
+
+.ntTheme:before
+{
+    transition: var(--transition);
+    background-color: var(--lightLight)
+}
+
+.ntDropdown
+{
+    transition: var(--transition);
+    position: absolute;
+    top: 100%;
+    margin-top: 10px;
+    right: 0;
+    border: 2px solid var(--lightLight);
+    padding: 10px 0;
+    width: 160px;
+    background: var(--dark);
+    max-height: 240px;
+    cursor: context-menu;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.ntDropdown.visible
+{
+    opacity: 1;
+    pointer-events: all;
+}
+
+.ntSelectableValue
+{
+    cursor: pointer;
+    transition: var(--transition);
+    border: none;
+    background: none;
+    font-family: var(--poppins);
+    font-weight: 300;
+    color: var(--lightLight);
+    display: block;
+    line-height: 22px;
+    width: 100%;
+    outline: none;
+}
+
+.ntSelectableValue:not(.selected):hover,
+.ntSelectableValue:not(.selected):focus
+{
+    transition: var(--transition);
+    color: var(--darkDark);
+    background: var(--light);
+}
+
+.ntSelectableValue.selected
+{
+    color: var(--darkDark);
+    background: var(--lightLight);
+}
+
+.ntBody
+{
+    display: flex;
+    flex-wrap: wrap;
+    flex-flow: wrap;
+    width: 100%;
+}
+
+.ntContainer
+{
+    display: flex;
+    flex-wrap: wrap;
+    flex-flow: wrap;
+    margin-left: 30px;
+    margin-right: 30px;
+    position: relative;
+    width: calc(100% - 60px);
+    max-height: 100%;
+}
+
+.ntContainer + .ntContainer
+{
+    margin-top: 45px;
+}
+
+.ntContainer:first-of-type
+{
+    margin-top: 60px;
+}
+
+.ntContainer:last-of-type
+{
+    margin-bottom: 60px;
+}
+
+.ntContainer:after
+{
+    transition: var(--transition);
+    content: '';
+    position: absolute;
+    top: 38px;
+    height: 2px;
+    left: 0;
+    right: 0;
+    background: var(--lightLight);
+}
+
+.ntContainerTitle
+{
+    user-select: none;
+    transition: var(--transition);
+    background: var(--lightLight);
+    color: var(--dark);
+    display: flex;
+    height: 40px;
+    padding: 0 20px;
+    font-weight: 500;
+    font-size: 1.1em;
+    font-family: var(--poppins);
+    align-items: center;
+}
+
+.ntOptionButton
+{
+    user-select: none;
+    transition: var(--transition);
+    color: var(--lightLight);
+    background: var(--dark);
+    border: 2px solid var(--lightLight);
+    display: flex;
+    height: 40px;
+    width: 40px;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    position: relative;
+    z-index: 1;
+    outline: none;
+    font-size: 16px;
+}
+
+* + .ntOptionButton
+{
+    margin-left: -2px;
+}
+
+.ntOptionButton:hover,
+.ntOptionButton:focus
+{
+    transition: var(--transition);
+    color: var(--dark);
+}
+
+.ntOptionButton > i
+{
+    position: relative;
+    z-index: 2;
+}
+
+.ntOptionButton:before
+{
+    transition: var(--transition);
+    content: '';
+    background: var(--dark);
+    position: absolute;
+    top: 70%;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+
+.ntOptionButton:hover:before,
+.ntOptionButton:focus:before
+{
+    transition: var(--transition);
+    background: var(--lightLight);
+    top: 7.5%;
+}
+
+.ntBlockList
+{
+    display: flex;
+    justify-content: space-between;
+    width: calc(var(--innerWidth) - 40px);
+    margin: -10px;
+    margin-top: 20px;
+    flex-wrap: wrap;
+}
+
+.ntNote
+{
+    user-select: none;
+    transition: var(--transition);
+    color: var(--lightDark);
+    display: block;
+    width: 100%;
+    font-weight: 200;
+    font-family: var(--poppins);
+    padding: 40px 10px;
+    text-align: center;
+}
+
+.ntPopup
+{
+    transition: var(--transition);
+    position: fixed;
+    pointer-events: none;
+    opacity: 0;
+    left: 0;
+    top: -20%;
+    right: 0;
+    bottom: 20%;
+    background: var(--dark);
+    z-index: 9001;
+}
+
+.ntPopup.visible
+{
+    top: 0;
+    bottom: 0;
+    pointer-events: all;
+    opacity: 1;
+}
+
+.ntPopupClose
+{
+    transition: var(--transition);
+    color: var(--dark);
+    border: 2px solid var(--lightLight);
+    background: var(--lightLight);
+    position: absolute;
+    top: 25px;
+    right: 25px;
+    font-size: 2em;
+    width: 60px;
+    height: 60px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+
+.ntPopupClose:hover,
+.ntPopupClose:focus
+{
+    transition: var(--transition);
+    color: var(--lightLight);
+    background: var(--dark);
+    border-color: var(--lightLight);
+}
+
+.ntPopupBody
+{
+    transition: var(--transition);
+    border: solid var(--darkLight);
+    background: var(--dark);
+    border-width: 0 2px;
+    height: 100%;
+    display: flex;
+    max-width: 520px;
+    padding: 20px 30px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    margin: 0 auto;
+    flex-wrap: wrap;
+    flex-flow: wrap;
+    align-items: center;
+}
+
+.ntPopupTitle
+{
+    transition: var(--transition);
+    font-size: 2em;
+    color: var(--light);
+    text-align: center;
+    width: 100%;
+    font-weight: bold;
+    text-transform: uppercase;
+    margin-top: auto;
+    position: relative;
+    line-height: 1;
+    padding-bottom: 20px;
+    margin-bottom: 20px;
+}
+
+.ntPopupTitle:before
+{
+    transition: var(--transition);
+    content: '';
+    position: absolute;
+    width: 20%;
+    left: 40%;
+    bottom: -1px;
+    height: 2px;
+    background: var(--light);
+}
+
+.ntPopupForm
+{
+    transition: var(--transition);
+    margin-top: 35px;
+    margin-bottom: auto;
+    width: 100%;
+}
+
+.ntPopupFieldSet + .ntPopupFieldSet
+{
+    margin-top: 25px;
+}
+
+.ntPopupLabel
+{
+    user-select: none;
+    transition: var(--transition);
+    font-size: 12px;
+    font-family: var(--poppins);
+    line-height: 1;
+    padding: 4px 8px;
+    color: var(--dark);
+    background: var(--lightLight);
+    margin-bottom: -2px;
+    position: relative;
+}
+
+.ntPopupLabel:after
+{
+    transition: var(--transition);
+    position: absolute;
+    border: 2px solid var(--red);
+    padding: 4px 8px;
+    content: attr(title);
+    text-transform: uppercase;
+    font-weight: 500;
+    top: 25%;
+    bottom: -25%;
+    left: 100%;
+    opacity: 0;
+    color: var(--red);
+    z-index: 0;
+}
+
+.ntPopupLabel.ng-invalid
+{
+    background: var(--red);
+}
+.ntPopupLabel.ng-invalid:after
+{
+    top: 0;
+    bottom: 0;
+    opacity: 1;
+}
+
+.ntPopupInput
+{
+    transition: var(--transition);
+    width: 100%;
+    border: 2px solid var(--lightLight);
+    background: var(--dark);
+    color: var(--light);
+    font-family: var(--poppins);
+    line-height: 1;
+    padding: 8px 16px;
+    font-size: 16px;
+    outline: none;
+    position: relative;
+    z-index: 1;
+}
+
+.ntPopupInput.ng-invalid
+{
+    border-color: var(--red);
+}
+
+.ntPopupControls
+{
+    user-select: none;
+    display: flex;
+    margin-top: 35px;
+    width: 100%;
+    justify-content: flex-end;
+}
+
+.ntPopupButton
+{
+    transition: var(--transition);
+    font-family: var(--poppins);
+    font-size: 16px;
+    line-height: 40px;
+    display: flex;
+    padding: 0 18px;
+    font-weight: 600;
+    color: var(--lightLight);
+    border: 2px solid var(--lightLight);
+    background: var(--dark);
+    cursor: pointer;
+}
+
+.ntPopupButton:hover,
+.ntPopupButton:focus
+{
+    transition: var(--transition);
+    background: var(--lightLight);
+    color: var(--dark);
+}
+
+.ntPopupButton:disabled
+{
+    pointer-events: none;
+    cursor: not-allowed;
+    border-color: var(--red);
+    color: var(--red);
+}
+
+.ntPopupButton.cancel
+{
+    opacity: .8;
+}
+
+.ntPopupButton + .ntPopupButton
+{
+    margin-left: 10px;
+}
+
+.ntTwitchAvatar
+{
+    width: 35px;
+    height: 35px;
+    background-size: cover!important;
+    background-position: center!important;
+    background-repeat: no-repeat!important;
+}
+
+.ntStreamPreview
+{
+    --width: calc(((var(--innerWidth) - 60px) * .25) - 20px);
+    display: inline-flex;
+    position: relative;
+    width: var(--width);
+    height: calc(var(--width) * 0.56369785794813979706877113866967);
+    margin: 10px;
+    margin-top: 20px;
+}
+
+.ntStreamPreview:last-child
+{
+    margin-right: auto;
+}
+
+.ntStreamPreview:nth-child(4n)
+{
+    margin-right: 10px!important;
+}
+
+.ntStreamPreviewImage
+{
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.ntstreamInfoOverlay
+{
+    position: absolute;
+    top: -10px;
+    left: 1vw;
+    right: 1vw;
+}
+
+.ntStreamerLogo
+{
+    --iconSize: 45px;
+    --borderSize: 2px;
+    width: calc(var(--iconSize) + var(--borderSize) * 2);
+    height: calc(var(--iconSize) + var(--borderSize) * 2);
+    background-size: cover;
+    border: var(--borderSize) solid var(--lightLight);
+    display: inline-block;
+    vertical-align: bottom;
+    margin-right: 10px;
+}
+
+.ntStreamerDisplayName
+{
+    font-weight: bold;
+    color: var(--light);
+    font-size: 14px;
+    display: inline-block;
+    text-shadow: -1px -1px var(--dark), 1px 1px var(--dark), 1px -1px var(--dark), -1px 1px var(--dark);
+}
+
+.ntStreamInfo
+{
+    transition: var(--transition);
+    position: absolute;
+    left: 5px;
+    right: 5px;
+    opacity: 0;
+    bottom: -10px;
+    pointer-events: none;
+    background: var(--light);
+    padding: 5px 20px;
+    color: var(--dark);
+    font-size: 12px;
+    text-align: center;
+}
+
+.ntStreamPreview:hover .ntStreamInfo
+{
+    bottom: 5px;
+    pointer-events: all;
+    opacity: .85;
+}
+
+.ntStreamInfo i
+{
+    font-size: 14px;
+    display: inline-block;
+    vertical-align: middle;
+    margin-right: 5px;
+}
+
+.ntStreamInfo i + b
+{
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.ntStreamGameInfo,
+.ntStreamViewerCount
+{
+    display: inline-block
+}
+
+.ntStreamGameInfo + .ntStreamViewerCount,
+.ntStreamViewerCount + .ntStreamGameInfo
+{
+    margin-left: 10px;
+}
+
+.ntStreamStatus
+{
+    transition: var(--transition);
+    font-size: 14px;
+    margin-bottom: 5px;
+    font-weight: bolder;
+    color: var(--darkDark);
+}
+
+.ntStreamPopup,
+.ntChatPopup
+{
+    transition: var(--transition);
+    position: absolute;
+    bottom: calc(100% + 30px);
+    width: calc(50% - 2.5px);
+    background: var(--light);
+    border: none;
+    padding: 4px 0;
+    margin: 0;
+    font-family: var(--poppins);
+    color: var(--dark);
+    font-size: 14px;
+    font-weight: 500;
+    text-align: center;
+    cursor: pointer;
+    user-select: none;
+    outline: none;
+}
+
+.ntStreamPopup:hover,
+.ntChatPopup:hover,
+.ntStreamPopup:focus,
+.ntChatPopup:focus
+{
+    transition: var(--transition);
+    background: var(--lightLight);
+}
+
+.ntStreamPreview:hover .ntStreamInfo .ntStreamPopup,
+.ntStreamPreview:hover .ntStreamInfo .ntChatPopup
+{
+    bottom: calc(100% + 5px);
+}
+
+.ntStreamPopup
+{
+    left: 0;
+}
+
+.ntChatPopup
+{
+    right: 0;
+}
+
+.ntBookmark
+{
+    transition: var(--transition);
+    --width: calc(((var(--innerWidth) - 60px) * .25) - 20px);
+    display: inline-flex;
+    position: relative;
+    width: var(--width);
+    height: 80px;
+    margin: 10px;
+    margin-top: 20px;
+    justify-content: center;
+    align-items: center;
+    border: 2px solid var(--lightLight);
+    color: var(--light);
+    background: var(--dark);
+    overflow: hidden;
+    text-decoration: none;
+}
+
+.ntBookmark:hover
+{
+    padding-right: 35px;
+}
+
+.ntBookmark:last-child
+{
+    margin-right: auto;
+}
+
+.ntBookmark:nth-child(4n)
+{
+    margin-right: 10px!important;
+}
+
+.ntBookmark:hover,
+.ntBookmark:focus
+{
+    transition: var(--transition);
+    background: var(--darkDark);
+    color: var(--lightLight);
+}
+
+.ntBookmarkInfo
+{
+    text-align: center;
+}
+
+.ntBookmarkTitle
+{
+    font-size: 16px;
+    font-weight: 200;
+}
+
+.ntBookmarkLink
+{
+    transition: var(--transition);
+    opacity: 0;
+    margin-top: 0px;
+    font-size: 10px;
+    height: 0px;
+    font-weight: 600;
+}
+
+.ntBookmark:hover .ntBookmarkLink,
+.ntBookmark:focus .ntBookmarkLink
+{
+    font-size: 10px;
+    margin-top: 5px;
+    height: 16px;
+    opacity: 1;
+}
+
+.ntBookmarkOptions
+{
+    transition: var(--transition);
+    position: absolute;
+    top: 5px;
+    right: -5px;
+    bottom: 5px;
+    opacity: 0;
+    pointer-events: none;
+    user-select: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-flow: column;
+}
+
+.ntBookmark:hover .ntBookmarkOptions
+{
+    right: 5px;
+    opacity: 1;
+    pointer-events: all;
+}
+
+.ntBookmarkOptionButton
+{
+    transition: var(--transition);
+    background-color: var(--dark);
+    color: var(--lightLight);
+    border: 2px solid var(--lightLight);
+    width: 25px;
+    height: 25px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0;
+    padding: 0;
+    outline: none;
+    font-size: 12px;
+    user-select: none;
+    cursor: pointer;
+}
+
+.ntBookmarkOptionButton:hover,
+.ntBookmarkOptionButton:focus
+{
+    transition: var(--transition);
+    background: var(--lightLight);
+    color: var(--dark);
+}
+
+.ntBookmarkOptionButton + .ntBookmarkOptionButton
+{
+    margin-top: -2px;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
+
+
+    BRIGHT THEME
+
+
+*/
+body.bright
+{
+    
+    --darkLight: #fff; 
+    --dark: #f4f4f4;
+    --darkDark: #eaeaea;
+
+    --lightLight: #000;
+    --light: #151515;
+    --lightDark: #4d4d4d;
+}
+
+body.bright .ntTwitchLogin:before
+{
+    background-image: url('/assets/Glitch_Black_Screen/Glitch_Black_RGB.svg');
+}
