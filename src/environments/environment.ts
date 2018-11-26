@@ -6,6 +6,9 @@ export const environment = {
   production: false
 };
 
+export const app_url = 'http://localhost:4200/';
+export const app_key = '7b4b2g2pmxjbnfewvvovma1ft8ja78';
+
 /*
  * For easier debugging in development mode, you can import the following file
  * to ignore zone related error stack frames such as `zone.run`, `zoneDelegate.invokeTask`.
