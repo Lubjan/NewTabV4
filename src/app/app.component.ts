@@ -66,9 +66,8 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   public createBookmark = (): void => {
-    if (this.bookmark.title.indexOf('http') || this.bookmark.title.indexOf('https')) {
-      this.bookmark.title = this.bookmark.title.replace('http://', '');
-      this.bookmark.title = this.bookmark.title.replace('https://', '');
+    if (this.bookmark.link.indexOf('http') || this.bookmark.link.indexOf('https')) {
+      this.bookmark.link = this.bookmark.link.replace(/https?:\/\//i, '');
     }
 
     if (this.bookmarks.push({
