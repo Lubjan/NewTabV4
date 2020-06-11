@@ -1,12 +1,11 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
-
-import { LanguaService } from './services/langua/langua.service';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Subscription } from 'rxjs';
 
 import { Bookmark } from './interfaces/bookmark.interface';
 import { Stream } from './interfaces/stream.interface';
 import { TwitchAccount } from './interfaces/twitchaccount.interface';
+import { LanguaService } from './services/langua/langua.service';
 import { TwitchService } from './services/twitch/twitch.service';
-import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-root',
@@ -118,7 +117,7 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   public popoutStream = (channel: string): void => {
-    window.open(`https://player.twitch.tv/?volume=0.42&!muted&channel=${channel}`, 'nt:popup:twitch:stream', 'width=800,height=460,resizable=yes');
+    window.open(`https://player.twitch.tv/?channel=${channel}&enableExtensions=true&muted=false&parent=${window.location.host}&player=popout&volume=0.42`, 'nt:popup:twitch:stream', 'width=800,height=460,resizable=yes');
   }
 
   public popoutChat = (channel: string): void => {
