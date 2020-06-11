@@ -1,19 +1,20 @@
 import { Injectable } from '@angular/core';
 import { Language } from 'src/app/interfaces/language.interface';
-import { LanguaDictonary, DictonarySet, LanguageSet } from './langua.dictonary';
+
+import { DictonarySet, LanguaDictonary, LanguageSet } from './langua.dictonary';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class LanguaService {
 
-  public current = 'en';
-  public available: Language[] = [];
-  public availableDetail;
+  current = 'en';
+  available: Language[] = [];
+  availableDetail;
 
   private dictonary: LanguaDictonary;
 
-  constructor () {
+  constructor() {
     this.available = Object.values(LanguageSet);
     this.availableDetail = LanguageSet;
 
@@ -25,7 +26,7 @@ export class LanguaService {
   /**
    * Get Selected Language
    */
-  public getLang = (): boolean => {
+  getLang = (): boolean => {
     if (localStorage.getItem('langua_selected')) {
       if (this.current = localStorage.getItem('langua_selected')) {
         this.getDictonary();
@@ -42,7 +43,7 @@ export class LanguaService {
    * Selectes a Language
    * @param id The Id of the Language
    */
-  public setLang = (id: string): void => {
+  setLang = (id: string): void => {
     localStorage.setItem('langua_selected', id);
     this.getLang();
     document.title = `${this.g('title')}`;
@@ -53,7 +54,7 @@ export class LanguaService {
    * @param translationKey The keyName of the Translation
    *        -> See [[LanguaDictonary]] for available keys
    */
-  public g = (translationKey: string): string => {
+  g = (translationKey: string): string => {
     if (!this.dictonary) {
       this.getDictonary();
     }

@@ -15,6 +15,7 @@ export interface LanguaDictonary {
     required: string;
     popup_confirm: string;
     popup_cancel: string;
+    popup_delete: string;
     twitch_logout: string;
     stream_popup_stream: string;
     stream_popup_chat: string;
@@ -36,6 +37,7 @@ export const DictornaryEnglish: LanguaDictonary = {
     new_bookmark_title: 'Displayname',
     required: 'Required',
     popup_cancel: 'Cancel',
+    popup_delete: 'Delete',
     popup_confirm: 'Confirm',
     twitch_logout: 'Unlink Twitch',
     stream_popup_chat: 'Popout Chat',
@@ -58,6 +60,7 @@ export const DictornaryGerman: LanguaDictonary = {
     new_bookmark_title: 'Anzeigename',
     required: 'Pflichfeld',
     popup_cancel: 'Abbrechen',
+    popup_delete: 'Löschen',
     popup_confirm: 'Bestätigen',
     twitch_logout: 'Twitch Trennen',
     stream_popup_chat: 'Chat Popup',
