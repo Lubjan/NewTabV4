@@ -10,32 +10,33 @@ import { TwitchService } from './services/twitch/twitch.service';
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
+  styleUrls: ['./app.component.css'],
 })
 export class AppComponent implements OnInit, OnDestroy {
 
-  // public sortOrder = 'stream.created_at';
+  sortOrder = 'stream.created_at';
 
-  public bookmarks: Bookmark[] = [];
-  public streams: Stream[] = [];
-  public twitchAccount: TwitchAccount;
+  bookmarks: Bookmark[] = [];
+  streams: Stream[] = [];
+  twitchAccount: TwitchAccount;
 
-  public selectedTheme = 'dark';
+  selectedTheme = 'dark';
 
-  public twitchDropdown = false;
-  public languageDropdown = false;
+  twitchDropdown = false;
+  languageDropdown = false;
 
-  public bookmarkCreation = false;
-  public bookmarkEditing = false;
+  bookmarkCreation = false;
+  bookmarkEditing = false;
 
-  public bookmark: Bookmark = {
+  bookmark: Bookmark = {
     link: '',
-    title: ''
+    title: '',
   };
+  destroy$: any;
 
-  constructor (
+  constructor(
     public langua: LanguaService,
-    private twitch: TwitchService
+    private twitch: TwitchService,
   ) {
     this.selectedTheme = localStorage.getItem('theme') || 'dark';
     if ('bright' === this.selectedTheme) {
@@ -52,7 +53,7 @@ export class AppComponent implements OnInit, OnDestroy {
     });
   }
 
-  public toggleTheme = (): void => {
+  toggleTheme = (): void => {
     if ('dark' !== this.selectedTheme) {
       localStorage.setItem('theme', 'dark');
       this.selectedTheme = 'dark';
@@ -64,14 +65,14 @@ export class AppComponent implements OnInit, OnDestroy {
     }
   }
 
-  public createBookmark = (): void => {
+  createBookmark = (): void => {
     if (this.bookmark.link.indexOf('http') || this.bookmark.link.indexOf('https')) {
       this.bookmark.link = this.bookmark.link.replace(/https?:\/\//i, '');
     }
 
     if (this.bookmarks.push({
       link: `http://${this.bookmark.link}`,
-      title: this.bookmark.title
+      title: this.bookmark.title,
     })) {
       localStorage.setItem('bookmarks', JSON.stringify(this.bookmarks));
     }
@@ -79,13 +80,13 @@ export class AppComponent implements OnInit, OnDestroy {
     this.bookmarkCreation = false;
     this.bookmark = {
       link: '',
-      title: ''
+      title: '',
     };
 
     this.getBookmarks();
   }
 
-  public saveEditBookmark = (): void => {
+  saveEditBookmark = (): void => {
     if (this.bookmark.title.indexOf('http') || this.bookmark.title.indexOf('https')) {
       this.bookmark.title = this.bookmark.title.replace('http://', '');
       this.bookmark.title = this.bookmark.title.replace('https://', '');
@@ -93,7 +94,7 @@ export class AppComponent implements OnInit, OnDestroy {
 
     if (this.bookmarks[this.bookmark.ix] = {
       link: `http://${this.bookmark.link}`,
-      title: this.bookmark.title
+      title: this.bookmark.title,
     }) {
       localStorage.setItem('bookmarks', JSON.stringify(this.bookmarks));
     }
@@ -101,30 +102,30 @@ export class AppComponent implements OnInit, OnDestroy {
     this.bookmarkEditing = false;
     this.bookmark = {
       link: '',
-      title: ''
+      title: '',
     };
 
     this.getBookmarks();
   }
 
-  public authTwitch = (): void => {
+  authTwitch = (): void => {
     this.twitch.sendAuthRequest();
   }
 
-  public twitchLogout = (): void => {
+  twitchLogout = (): void => {
     localStorage.removeItem('twitch_user_token');
-    location.href = location.href + '';
+    location.href = location.href;
   }
 
-  public popoutStream = (channel: string): void => {
+  popoutStream = (channel: string): void => {
     window.open(`https://player.twitch.tv/?channel=${channel}&enableExtensions=true&muted=false&parent=${window.location.host}&player=popout&volume=0.42`, 'nt:popup:twitch:stream', 'width=800,height=460,resizable=yes');
   }
 
-  public popoutChat = (channel: string): void => {
+  popoutChat = (channel: string): void => {
     window.open(`https://www.twitch.tv/popout/${channel}/chat?popout=`, 'nt:popup:twitch:chat', 'width=360,height=640,resizable=yes');
   }
 
-  public bookmarkEdit = (Evn, index: number): void => {
+  bookmarkEdit = (Evn, index: number): void => {
     this.bookmark.link = this.bookmarks[index].link;
     this.bookmark.title = this.bookmarks[index].title;
     this.bookmark.ix = index;
@@ -132,10 +133,19 @@ export class AppComponent implements OnInit, OnDestroy {
     Evn.preventDefault();
   }
 
-  public bookmarkRemove = (Evn, index: number): void => {
+  bookmarkRemove = (Evn, index: number): void => {
     this.bookmarks.splice(index, 1);
     localStorage.setItem('bookmarks', JSON.stringify(this.bookmarks));
+    this.resetBookmark();
+    this.bookmarkEditing = false;
     Evn.preventDefault();
+  }
+
+  resetBookmark = (): void => {
+    this.bookmark = {
+      link: '',
+      title: '',
+    };
   }
 
   private getBookmarks = (): void => {
@@ -147,20 +157,20 @@ export class AppComponent implements OnInit, OnDestroy {
     }
   }
 
-  ngOnInit (): void {
+  ngOnInit(): void {
     this.getBookmarks();
 
     if (localStorage.getItem('twitch_user_token')) {
-      const twitchUserSub: Subscription = this.twitch.getUser().subscribe(Response => {
-        this.twitchAccount = Response;
-        this.streams = this.twitch.getOnlineFollwing(Response._id);
-      }, () => {
-        localStorage.removeItem('twitch_user_token');
-      }, () => twitchUserSub.unsubscribe());
+      const sub: Subscription = this.twitch.getUser()
+        .subscribe(Response => {
+          this.twitchAccount = Response;
+          this.streams = this.twitch.getOnlineFollwing(Response._id);
+        }, () => localStorage.removeItem('twitch_user_token'), () => sub.unsubscribe());
     }
   }
 
-  ngOnDestroy (): void {
+  ngOnDestroy(): void {
+
   }
 
 }

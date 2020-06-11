@@ -1,25 +1,26 @@
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Subscription, Observable } from 'rxjs';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Observable, Subscription } from 'rxjs';
+
 import { app_key, app_url } from '../../../environments/environment';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class TwitchService {
 
   private scopes: string[] = [
-    'user_read'
+    'user_read',
   ];
 
   private headers = {
-    'Accept': 'application/vnd.twitchtv.v5+json',
+    Accept: 'application/vnd.twitchtv.v5+json',
     'Client-ID': app_key,
-    'Authorization': `OAuth ${localStorage.getItem('twitch_user_token')}`
+    Authorization: `OAuth ${localStorage.getItem('twitch_user_token')}`,
   };
 
-  constructor (
-    private http: HttpClient
+  constructor(
+    private http: HttpClient,
   ) {
     if (localStorage.getItem('twitchAuthInProcess')) {
       if (-1 !== location.hash.indexOf('access_token')) {
@@ -31,19 +32,19 @@ export class TwitchService {
     }
   }
 
-  public sendAuthRequest = (): void => {
+  sendAuthRequest = (): void => {
     localStorage.setItem('twitchAuthInProcess', JSON.stringify(true));
     location.href = `https://id.twitch.tv/oauth2/authorize?client_id=${app_key}&redirect_uri=${app_url}&response_type=token&scope=${this.scopes.join(' ')}`;
   }
 
-  public getUser = (): Observable<any> => {
+  getUser = (): Observable<any> => {
     setTimeout(() => {}, 250);
     return this.http.get('https://api.twitch.tv/kraken/user', {
-      headers: this.headers
+      headers: this.headers,
     });
   }
 
-  public getOnlineFollwing = (_id: string): any[] => {
+  getOnlineFollwing = (_id: string): any[] => {
     const streams: any[] = [];
     const followingSub: Subscription = this.getUserFollowingStreams(_id).subscribe(Response => {
       Response.follows.forEach(Stream => {
@@ -59,13 +60,13 @@ export class TwitchService {
 
   private getStreamInfo = (_streamerId: string): Observable<any> => {
     return this.http.get(`https://api.twitch.tv/kraken/streams/${_streamerId}`, {
-      headers: this.headers
+      headers: this.headers,
     });
   }
 
   private getUserFollowingStreams = (_id: string): Observable<any> => {
     return this.http.get(`https://api.twitch.tv/kraken/users/${_id}/follows/channels`, {
-      headers: this.headers
+      headers: this.headers,
     });
   }
 
@@ -74,9 +75,9 @@ export class TwitchService {
     localStorage.removeItem('twitchAuthInProcess');
     location.hash = '';
     this.headers = {
-      'Accept': 'application/vnd.twitchtv.v5+json',
+      Accept: 'application/vnd.twitchtv.v5+json',
       'Client-ID': app_key,
-      'Authorization': `OAuth ${localStorage.getItem('twitch_user_token')}`
+      Authorization: `OAuth ${localStorage.getItem('twitch_user_token')}`,
     };
   }
 
