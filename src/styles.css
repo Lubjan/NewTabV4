@@ -442,9 +442,7 @@ app-root
 .ntPopupBody
 {
     transition: var(--transition);
-    border: solid var(--darkLight);
     background: var(--dark);
-    border-width: 0 2px;
     height: 100%;
     display: flex;
     max-width: 520px;
