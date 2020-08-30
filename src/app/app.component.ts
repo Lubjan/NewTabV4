@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
 
 import { Bookmark } from './interfaces/bookmark.interface';
@@ -12,7 +12,7 @@ import { TwitchService } from './services/twitch/twitch.service';
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css'],
 })
-export class AppComponent implements OnInit, OnDestroy {
+export class AppComponent implements OnInit {
 
   sortOrder = 'stream.created_at';
 
@@ -33,6 +33,7 @@ export class AppComponent implements OnInit, OnDestroy {
     title: '',
   };
   destroy$: any;
+  volume: number;
 
   constructor(
     public langua: LanguaService,
@@ -67,11 +68,11 @@ export class AppComponent implements OnInit, OnDestroy {
 
   createBookmark = (): void => {
     if (this.bookmark.link.indexOf('http') || this.bookmark.link.indexOf('https')) {
-      this.bookmark.link = this.bookmark.link.replace(/https?:\/\//i, '');
+      this.bookmark.link = this.bookmark.link.replace(/https?:\/\//gmi, '');
     }
 
     if (this.bookmarks.push({
-      link: `http://${this.bookmark.link}`,
+      link: `://${this.bookmark.link}`,
       title: this.bookmark.title,
     })) {
       localStorage.setItem('bookmarks', JSON.stringify(this.bookmarks));
@@ -88,12 +89,11 @@ export class AppComponent implements OnInit, OnDestroy {
 
   saveEditBookmark = (): void => {
     if (this.bookmark.title.indexOf('http') || this.bookmark.title.indexOf('https')) {
-      this.bookmark.title = this.bookmark.title.replace('http://', '');
-      this.bookmark.title = this.bookmark.title.replace('https://', '');
+      this.bookmark.title = this.bookmark.title.replace(/https?:\/\//gmi, '');
     }
 
     if (this.bookmarks[this.bookmark.ix] = {
-      link: `http://${this.bookmark.link}`,
+      link: `://${this.bookmark.link}`,
       title: this.bookmark.title,
     }) {
       localStorage.setItem('bookmarks', JSON.stringify(this.bookmarks));
@@ -118,11 +118,21 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   popoutStream = (channel: string): void => {
-    window.open(`https://player.twitch.tv/?channel=${channel}&enableExtensions=true&muted=false&parent=${window.location.host}&player=popout&volume=0.42`, 'nt:popup:twitch:stream', 'width=800,height=460,resizable=yes');
+    window.open(`https://player.twitch.tv/?channel=${channel}&enableExtensions=true&muted=false&parent=${window.location.hostname}&player=popout&volume=${this.getVolume() / 100}`, 'nt:popup:twitch:stream', 'width=800,height=460,resizable=yes');
   }
 
   popoutChat = (channel: string): void => {
     window.open(`https://www.twitch.tv/popout/${channel}/chat?popout=`, 'nt:popup:twitch:chat', 'width=360,height=640,resizable=yes');
+  }
+
+  setVolume = (_volume: number = 40): void => {
+    const volume = _volume > 100 ? 100 : _volume < 0 ? 0 : _volume;
+    localStorage.setItem('volume', volume.toString());
+    this.volume = this.getVolume();
+  }
+
+  getVolume = (): number => {
+    return parseInt(localStorage.getItem('volume'), 10);
   }
 
   bookmarkEdit = (Evn, index: number): void => {
@@ -151,26 +161,23 @@ export class AppComponent implements OnInit, OnDestroy {
   private getBookmarks = (): void => {
     if (!localStorage.getItem('bookmarks')) {
       localStorage.setItem('bookmarks', JSON.stringify([]));
-      this.bookmarks = JSON.parse(localStorage.getItem('bookmarks'));
-    } else {
-      this.bookmarks = JSON.parse(localStorage.getItem('bookmarks'));
     }
+
+    this.bookmarks = JSON.parse(localStorage.getItem('bookmarks'));
   }
 
   ngOnInit(): void {
-    this.getBookmarks();
+    this.volume = this.getVolume();
+    this.twitch.onlineStream$.subscribe((stream) => this.streams.push(stream));
 
     if (localStorage.getItem('twitch_user_token')) {
       const sub: Subscription = this.twitch.getUser()
         .subscribe(Response => {
           this.twitchAccount = Response;
-          this.streams = this.twitch.getOnlineFollwing(Response._id);
+          this.twitch.getOnlineFollwing();
         }, () => localStorage.removeItem('twitch_user_token'), () => sub.unsubscribe());
     }
+
+    this.getBookmarks();
   }
-
-  ngOnDestroy(): void {
-
-  }
-
 }

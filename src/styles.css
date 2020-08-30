@@ -248,10 +248,9 @@ app-root
     display: flex;
     flex-wrap: wrap;
     flex-flow: wrap;
-    margin-left: 30px;
-    margin-right: 30px;
+    padding: 0 30px;
     position: relative;
-    width: calc(100% - 60px);
+    width: 100%;
     max-height: 100%;
 }
 
@@ -277,8 +276,8 @@ app-root
     position: absolute;
     top: 38px;
     height: 2px;
-    left: 45px;
-    right: 0;
+    left: 75px;
+    right: 30px;
     z-index: 1;
     background: var(--lightLight);
 }
@@ -363,9 +362,8 @@ app-root
 .ntBlockList
 {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     width: calc(var(--innerWidth) - 40px);
-    margin: -10px;
     margin-top: 20px;
     flex-wrap: wrap;
 }
@@ -625,23 +623,13 @@ app-root
 
 .ntStreamPreview
 {
-    --width: calc(((var(--innerWidth) - 60px) * .25) - 20px);
+    --width: calc(((var(--innerWidth) - 60px) * .25) - 30px);
     display: inline-flex;
     position: relative;
     width: var(--width);
     height: calc(var(--width) * 0.56369785794813979706877113866967);
     margin: 10px;
     margin-top: 20px;
-}
-
-.ntStreamPreview:last-child
-{
-    margin-right: auto;
-}
-
-.ntStreamPreview:nth-child(4n)
-{
-    margin-right: 10px!important;
 }
 
 .ntStreamPreviewImage
@@ -825,7 +813,7 @@ app-root
 .ntBookmark
 {
     transition: var(--transition);
-    --width: calc(((var(--innerWidth) - 60px) * .25) - 20px);
+    --width: calc(((var(--innerWidth) - 60px) * .25) - 30px);
     display: inline-flex;
     position: relative;
     width: var(--width);
@@ -969,6 +957,75 @@ app-root
     margin-top: -2px;
 }
 
+.ntVolumeControl {
+    display: flex;
+    align-items: center;
+    padding: 0 10px;
+    padding-bottom: 2px;
+    font-weight: 200;
+}
+
+.ntVolumeControl span {
+    margin-right: 10px;
+}
+
+.ntVolumeControl input {
+    transition: var(--transition);
+    display: inline-flex;
+    background: none;
+    border: 2px solid transparent;
+    border-color: transparent var(--light);
+    border-radius: 200px;
+    font-family: inherit;
+    color: var(--light);
+    padding: 0 10px;
+    height: 25px;
+    outline: none;
+    align-items: center;
+    justify-content: center;
+    line-height: 25px;
+    text-align: center;
+    text-decoration: underline;
+    width: 60px;
+    cursor: pointer;
+    position: relative;
+    z-index: 1;
+}
+
+.ntVolumeControl input:hover {
+    transition: var(--transition);
+    color: var(--dark);
+}
+
+.ntVolumeControl input:focus {
+    transition: var(--transition);
+    color: var(--dark);
+    text-decoration: none;
+}
+
+.ntVolumeControl input + span {
+    transition: var(--transition);
+    pointer-events: none;
+    position: relative;
+    z-index: 0;
+    margin-left: -56px;
+    border-radius: 200px;
+    width: 52px;
+    height: 25px;
+    transform: scale(0);
+    background-color: var(--light);
+}
+
+.ntVolumeControl input:hover + span,
+.ntVolumeControl input:focus + span {
+    transition: var(--transition);
+    background-color: var(--light);
+    transform: scale(1);
+}
+
+.ntVolumeControl input::-webkit-inner-spin-button {
+    display: none;
+}
 
 
 
@@ -979,8 +1036,23 @@ app-root
 
 
 
+@media (max-width: 1440px) {
+  .ntStreamPreview {
+      --width: calc(((var(--innerWidth) - 60px) * (1 / 3)) - 30px);
+  }
+}
 
+@media (max-width: 768px) {
+  .ntStreamPreview {
+      --width: calc(((var(--innerWidth) - 60px) * (1 / 2)) - 30px);
+  }
+}
 
+@media (max-width: 425px) {
+  .ntStreamPreview {
+      --width: calc(((var(--innerWidth) - 60px)) - 30px);
+  }
+}
 
 
 /*

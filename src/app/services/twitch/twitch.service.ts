@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, Subscription } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
+import { Stream } from 'src/app/interfaces/stream.interface';
 
 import { app_key, app_url } from '../../../environments/environment';
 
@@ -8,6 +9,8 @@ import { app_key, app_url } from '../../../environments/environment';
   providedIn: 'root',
 })
 export class TwitchService {
+
+  onlineStream$: Subject<Stream> = new Subject();
 
   private scopes: string[] = [
     'user_read',
@@ -38,36 +41,18 @@ export class TwitchService {
   }
 
   getUser = (): Observable<any> => {
-    setTimeout(() => {}, 250);
     return this.http.get('https://api.twitch.tv/kraken/user', {
       headers: this.headers,
     });
   }
 
-  getOnlineFollwing = (_id: string): any[] => {
-    const streams: any[] = [];
-    const followingSub: Subscription = this.getUserFollowingStreams(_id).subscribe(Response => {
-      Response.follows.forEach(Stream => {
-        const streamSub: Subscription = this.getStreamInfo(Stream.channel._id).subscribe(sResponse => {
-          if (sResponse.stream) {
-            streams.push(sResponse);
-          }
-        });
+  getOnlineFollwing = (): void => {
+    this.http.get(`https://api.twitch.tv/kraken/streams/followed/?limit=100`, { headers: this.headers })
+      .subscribe((res: {streams: Stream[]}) => {
+        for (const stream of res.streams) {
+          this.onlineStream$.next(stream);
+        }
       });
-    }, () => null, () => followingSub.unsubscribe());
-    return streams;
-  }
-
-  private getStreamInfo = (_streamerId: string): Observable<any> => {
-    return this.http.get(`https://api.twitch.tv/kraken/streams/${_streamerId}`, {
-      headers: this.headers,
-    });
-  }
-
-  private getUserFollowingStreams = (_id: string): Observable<any> => {
-    return this.http.get(`https://api.twitch.tv/kraken/users/${_id}/follows/channels`, {
-      headers: this.headers,
-    });
   }
 
   private saveUserInfo = (access_token: string): void => {

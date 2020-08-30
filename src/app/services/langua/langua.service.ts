@@ -30,6 +30,7 @@ export class LanguaService {
     if (localStorage.getItem('langua_selected')) {
       if (this.current = localStorage.getItem('langua_selected')) {
         this.getDictonary();
+
         return true;
       } else {
         return false;
@@ -58,6 +59,7 @@ export class LanguaService {
     if (!this.dictonary) {
       this.getDictonary();
     }
+
     return this.dictonary[translationKey] || '/NONE/';
   }
 

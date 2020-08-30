@@ -44,31 +44,36 @@
 
   <div class="ntContainer">
     <div class="ntContainerTitle">{{langua.g('streams')}}</div>
+    <div class="ntVolumeControl">
+      <span>{{langua.g('popup_volume')}}</span>
+      <input type="number" [value]="volume" (input)="setVolume($event.target.value)" (blur)="setVolume($event.target.value)" [max]="100" [min]="0" step="1">
+      <span></span>
+    </div>
     <div class="ntBlockList" *ngIf="streams.length">
-      <div class="ntStreamPreview" *ngFor="let streamer of streams">
-        <a class="ntStreamPreviewImage" [style.backgroundImage]="'url('+streamer.stream.preview.large+')'" [href]="streamer.stream.channel.url"></a>
+      <div class="ntStreamPreview" *ngFor="let stream of streams">
+        <a class="ntStreamPreviewImage" [style.backgroundImage]="'url('+stream.preview.large+')'" [href]="stream.channel.url"></a>
         <div class="ntstreamInfoOverlay">
           <div class="ntStreamerInfo">
-            <div class="ntStreamerLogo" [style.backgroundImage]="'url('+streamer.stream.channel.logo+')'"></div>
-            <div class="ntStreamerLogo drop" [style.backgroundImage]="'url('+streamer.stream.channel.logo+')'"></div>
-            <div class="ntStreamerDisplayName">{{streamer.stream.channel.display_name}}</div>
+            <div class="ntStreamerLogo" [style.backgroundImage]="'url('+stream.channel.logo+')'"></div>
+            <div class="ntStreamerLogo drop" [style.backgroundImage]="'url('+stream.channel.logo+')'"></div>
+            <div class="ntStreamerDisplayName">{{stream.channel.display_name}}</div>
           </div>
         </div>
         <div class="ntStreamInfo">
           <div class="ntStreamInfoActions">
-            <button class="ntStreamPopup" (click)="popoutStream(streamer.stream.channel.name)">{{langua.g('stream_popup_stream')}}</button>
-            <button class="ntChatPopup" (click)="popoutChat(streamer.stream.channel.name)">{{langua.g('stream_popup_chat')}}</button>
+            <button class="ntStreamPopup" (click)="popoutStream(stream.channel.name)">{{langua.g('stream_popup_stream')}}</button>
+            <button class="ntChatPopup" (click)="popoutChat(stream.channel.name)">{{langua.g('stream_popup_chat')}}</button>
           </div>
           <div class="ntStreamStatus">
-            <b>{{streamer.stream.channel.status}}</b>
+            <b>{{stream.channel.status}}</b>
           </div>
           <div class="ntStreamViewerCount">
             <i class="material-icons">people_outline</i>
-            <b>{{streamer.stream.viewers}}</b>
+            <b>{{stream.viewers}}</b>
           </div>
           <div class="ntStreamGameInfo">
             <i class="material-icons">videogame_asset</i>
-            <b>{{streamer.stream.channel.game}}</b>
+            <b>{{stream.channel.game}}</b>
           </div>
         </div>
       </div>

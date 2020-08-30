@@ -16,6 +16,7 @@ export interface LanguaDictonary {
     popup_confirm: string;
     popup_cancel: string;
     popup_delete: string;
+    popup_volume: string;
     twitch_logout: string;
     stream_popup_stream: string;
     stream_popup_chat: string;
@@ -39,11 +40,12 @@ export const DictornaryEnglish: LanguaDictonary = {
     popup_cancel: 'Cancel',
     popup_delete: 'Delete',
     popup_confirm: 'Confirm',
+    popup_volume: 'Volume',
     twitch_logout: 'Unlink Twitch',
     stream_popup_chat: 'Popout Chat',
     stream_popup_stream: 'Popout Stream',
     edit_bookmark: 'Edit Bookmark',
-    title: 'New Tab'
+    title: 'New Tab',
 };
 
 export const DictornaryGerman: LanguaDictonary = {
@@ -62,25 +64,26 @@ export const DictornaryGerman: LanguaDictonary = {
     popup_cancel: 'Abbrechen',
     popup_delete: 'Löschen',
     popup_confirm: 'Bestätigen',
+    popup_volume: 'Lautstärke',
     twitch_logout: 'Twitch Trennen',
     stream_popup_chat: 'Chat Popup',
     stream_popup_stream: 'Stream Popout',
     edit_bookmark: 'Seite Bearbeiten',
-    title: 'Neuer Tab'
+    title: 'Neuer Tab',
 };
 
 export const DictonarySet = {
     en: DictornaryEnglish,
-    de: DictornaryGerman
+    de: DictornaryGerman,
 };
 
 export const LanguageSet = {
-    en: <Language>{
+    en:  {
         display: 'English',
-        id: 'en'
-    },
-    de: <Language>{
+        id: 'en',
+    } as Language,
+    de:  {
         display: 'Deutsch',
-        id: 'de'
-    }
+        id: 'de',
+    } as Language,
 };
