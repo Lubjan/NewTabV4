@@ -132,7 +132,9 @@ export class AppComponent implements OnInit {
   }
 
   getVolume = (): number => {
-    return parseInt(localStorage.getItem('volume'), 10);
+    const volume = parseInt(localStorage.getItem('volume'), 10);
+
+    return !isNaN(volume) ? volume : 40;
   }
 
   bookmarkEdit = (Evn, index: number): void => {
