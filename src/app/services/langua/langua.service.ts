@@ -1,18 +1,28 @@
 import { Injectable } from '@angular/core';
 import { Language } from 'src/app/interfaces/language.interface';
 
-import { DictonarySet, LanguaDictonary, LanguageSet } from './langua.dictonary';
+import { DictionarySet, LanguaDictionary, LanguageSet } from './langua.dictionary';
 
 @Injectable({
   providedIn: 'root',
 })
 export class LanguaService {
 
+  /**
+   * Get or Set the Twitch User auth token
+   */
+  get languaSelected(): string {
+    return localStorage.getItem('langua_selected');
+  }
+  set languaSelected(val: string) {
+    localStorage.setItem('langua_selected', val);
+  }
+
   current = 'en';
   available: Language[] = [];
   availableDetail;
 
-  private dictonary: LanguaDictonary;
+  private dictionary: LanguaDictionary;
 
   constructor() {
     this.available = Object.values(LanguageSet);
@@ -26,48 +36,43 @@ export class LanguaService {
   /**
    * Get Selected Language
    */
-  getLang = (): boolean => {
-    if (localStorage.getItem('langua_selected')) {
-      if (this.current = localStorage.getItem('langua_selected')) {
-        this.getDictonary();
+  getLang(): boolean {
+    if (this.languaSelected && (this.current = this.languaSelected)) {
+      this.getDictionary();
+      document.title = this.g('title');
+      document.documentElement.lang = this.current;
 
-        return true;
-      } else {
-        return false;
-      }
-    } else {
-      return false;
+      return true;
     }
+
+    return false;
   }
 
   /**
    * Selectes a Language
    * @param id The Id of the Language
    */
-  setLang = (id: string): void => {
-    localStorage.setItem('langua_selected', id);
+  setLang(id: string): void {
+    this.languaSelected = id;
     this.getLang();
-    document.title = `${this.g('title')}`;
   }
 
   /**
    * Gets a Translation by it's key
    * @param translationKey The keyName of the Translation
-   *        -> See [[LanguaDictonary]] for available keys
    */
-  g = (translationKey: string): string => {
-    if (!this.dictonary) {
-      this.getDictonary();
+  g(translationKey: string): string {
+    if (!this.dictionary) {
+      this.getDictionary();
     }
 
-    return this.dictonary[translationKey] || '/NONE/';
+    return this.dictionary[translationKey] || '/NONE/';
   }
 
   /**
-   * Sets the Current Language Dictonary
+   * Sets the Current Language Dictionary
    */
-  private getDictonary = (): void => {
-    this.dictonary = DictonarySet[this.current];
+  private getDictionary(): void {
+    this.dictionary = DictionarySet[this.current];
   }
-
 }

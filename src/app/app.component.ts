@@ -1,26 +1,55 @@
-import { Component, OnInit } from '@angular/core';
-import { Subscription } from 'rxjs';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
-import { Bookmark } from './interfaces/bookmark.interface';
+import { Bookmark } from './classes/bookmark.class';
 import { Stream } from './interfaces/stream.interface';
-import { TwitchAccount } from './interfaces/twitchaccount.interface';
+import { Account } from './interfaces/twitch.interface';
 import { LanguaService } from './services/langua/langua.service';
 import { TwitchService } from './services/twitch/twitch.service';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css'],
 })
-export class AppComponent implements OnInit {
+export class AppComponent implements OnInit, OnDestroy {
+  /**
+   * Get or Set the theme for the page
+   */
+  get selectedTheme(): string {
+    return localStorage.getItem('theme') ?? 'dark';
+  }
+  set selectedTheme(theme: string) {
+    localStorage.setItem('theme', theme);
+  }
 
-  sortOrder = 'stream.created_at';
+  /**
+   * Get or Set the bookmarks in the localStorage
+   */
+  get bookmarkStorage(): Bookmark[] {
+    return JSON.parse(localStorage.getItem('bookmarks'));
+  }
+  set bookmarkStorage(bookmarks: Bookmark[]) {
+    localStorage.setItem('bookmarks', JSON.stringify(bookmarks));
+  }
+
+  /**
+   * Get or Set the volume for poput player
+   */
+  get volume(): number {
+    const volume = parseInt(localStorage.getItem('volume'), 10);
+
+    return !isNaN(volume) ? volume : 40;
+  }
+  set volume(_volume: number) {
+    const volume = typeof _volume === 'undefined' ? 40 : _volume > 100 ? 100 : _volume < 0 ? 0 : _volume;
+    localStorage.setItem('volume', volume.toString());
+  }
+
 
   bookmarks: Bookmark[] = [];
   streams: Stream[] = [];
-  twitchAccount: TwitchAccount;
-
-  selectedTheme = 'dark';
+  twitchAccount: Account;
 
   twitchDropdown = false;
   languageDropdown = false;
@@ -28,158 +57,164 @@ export class AppComponent implements OnInit {
   bookmarkCreation = false;
   bookmarkEditing = false;
 
-  bookmark: Bookmark = {
-    link: '',
-    title: '',
-  };
-  destroy$: any;
-  volume: number;
+  bookmark = new Bookmark();
 
-  constructor(
-    public langua: LanguaService,
-    private twitch: TwitchService,
-  ) {
-    this.selectedTheme = localStorage.getItem('theme') || 'dark';
-    if ('bright' === this.selectedTheme) {
-      document.body.classList.add('bright');
-    }
+  private destroy$: Subject<void> = new Subject();
 
-    document.title = `${langua.g('title')}`;
+  constructor(public langua: LanguaService, private twitch: TwitchService) {
+    document.body.classList.add(this.selectedTheme);
 
-    document.body.style.setProperty('--innerWidth', `${window.innerWidth}px`);
-    document.body.style.setProperty('--innerHeight', `${window.innerHeight}px`);
-    window.addEventListener('resize', () => {
-      document.body.style.setProperty('--innerWidth', `${window.innerWidth}px`);
-      document.body.style.setProperty('--innerHeight', `${window.innerHeight}px`);
-    });
+    this.setBodyCssVars();
+    window.addEventListener('resize', () => this.setBodyCssVars());
   }
 
-  toggleTheme = (): void => {
-    if ('dark' !== this.selectedTheme) {
-      localStorage.setItem('theme', 'dark');
-      this.selectedTheme = 'dark';
-      document.body.classList.remove('bright');
-    } else {
-      localStorage.setItem('theme', 'bright');
-      this.selectedTheme = 'bright';
-      document.body.classList.add('bright');
-    }
-  }
+  ngOnInit(): void {
+    this.twitch.onlineStream$.subscribe((stream) => this.streams.push(stream));
 
-  createBookmark = (): void => {
-    if (this.bookmark.link.indexOf('http') || this.bookmark.link.indexOf('https')) {
-      this.bookmark.link = this.bookmark.link.replace(/https?:\/\//gmi, '');
+    if (this.twitch.userToken) {
+      this.twitch.getUser()
+        .pipe(takeUntil(this.destroy$))
+        .subscribe(
+          (res) => {
+            this.twitchAccount = res;
+            this.twitch.getOnlineFollwing();
+          },
+          () => localStorage.removeItem('twitch_user_token'),
+        );
     }
-
-    if (this.bookmarks.push({
-      link: `://${this.bookmark.link}`,
-      title: this.bookmark.title,
-    })) {
-      localStorage.setItem('bookmarks', JSON.stringify(this.bookmarks));
-    }
-
-    this.bookmarkCreation = false;
-    this.bookmark = {
-      link: '',
-      title: '',
-    };
 
     this.getBookmarks();
   }
 
-  saveEditBookmark = (): void => {
-    if (this.bookmark.title.indexOf('http') || this.bookmark.title.indexOf('https')) {
-      this.bookmark.title = this.bookmark.title.replace(/https?:\/\//gmi, '');
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  /**
+   * Toggle the theme of the page between dark and bright
+   */
+  toggleTheme(): void {
+    document.body.classList.remove(this.selectedTheme);
+    document.body.classList.add(this.selectedTheme = this.selectedTheme === 'dark' ? 'bright' : 'dark');
+  }
+
+  /**
+   * Updates or Creates a Bookmark
+   *
+   * If Updating, a parameter called index ahs to be passed, the value of bookmark.ix should be used
+   *
+   * @param index The ix parameter of the Bookmark if it is in edit mode
+   */
+  updateOrCreateBookmark(index: number = null): void {
+    if (!/https?:\/\//gim.test(this.bookmark.link)) {
+      this.bookmark.link = `http://${this.bookmark.link}`;
     }
 
-    if (this.bookmarks[this.bookmark.ix] = {
-      link: `://${this.bookmark.link}`,
+    const bookmarkModel = {
+      link: this.bookmark.link,
       title: this.bookmark.title,
-    }) {
-      localStorage.setItem('bookmarks', JSON.stringify(this.bookmarks));
-    }
-
-    this.bookmarkEditing = false;
-    this.bookmark = {
-      link: '',
-      title: '',
     };
 
-    this.getBookmarks();
+    (index !== null && typeof index !== 'undefined') ? this.bookmarks[this.bookmark.ix] = bookmarkModel : this.bookmarks.push(bookmarkModel);
+
+    this.bookmarkStorage = this.bookmarks;
+    this.bookmarkCreation = this.bookmarkEditing = false;
+    this.resetBookmark();
   }
 
-  authTwitch = (): void => {
-    this.twitch.sendAuthRequest();
+  /**
+   * Send auth request to Twitch
+   */
+  authTwitch(): void {
+    this.twitch.authUser();
   }
 
-  twitchLogout = (): void => {
+  /**
+   * Remove the user token to log the user out
+   */
+  twitchLogout(): void {
     localStorage.removeItem('twitch_user_token');
     location.href = location.href;
   }
 
-  popoutStream = (channel: string): void => {
-    window.open(`https://player.twitch.tv/?channel=${channel}&enableExtensions=true&muted=false&parent=${window.location.hostname}&player=popout&volume=${this.getVolume() / 100}`, 'nt:popup:twitch:stream', 'width=800,height=460,resizable=yes');
+  /**
+   * Opens a stream popout
+   *
+   * @param channel The channel name to open the stream for
+   */
+  popoutStream(channel: string): void {
+    const time = new Date().getMilliseconds();
+    window.open(`https://player.twitch.tv/?channel=${channel}&enableExtensions=true&muted=false&parent=${window.location.hostname}&player=popout&volume=${this.volume / 100}`, `nt:popup:twitch:stream:cast-${time}`, 'width=800,height=460,resizable=yes');
   }
 
-  popoutChat = (channel: string): void => {
-    window.open(`https://www.twitch.tv/popout/${channel}/chat?popout=`, 'nt:popup:twitch:chat', 'width=360,height=640,resizable=yes');
+  /**
+   * Opens a chat popout
+   *
+   * @param channel The channel name tp open the chat for
+   */
+  popoutChat(channel: string): void {
+    const time = new Date().getMilliseconds();
+    window.open(`https://www.twitch.tv/popout/${channel}/chat?popout=`, `nt:popup:twitch:chat:cast-${time}`, 'width=360,height=640,resizable=yes');
   }
 
-  setVolume = (_volume: number = 40): void => {
-    const volume = _volume > 100 ? 100 : _volume < 0 ? 0 : _volume;
-    localStorage.setItem('volume', volume.toString());
-    this.volume = this.getVolume();
-  }
 
-  getVolume = (): number => {
-    const volume = parseInt(localStorage.getItem('volume'), 10);
-
-    return !isNaN(volume) ? volume : 40;
-  }
-
-  bookmarkEdit = (Evn, index: number): void => {
+  /**
+   * Stores the bookmark to edit in a temp var
+   *
+   * @param evn Event fired by triggering element
+   * @param index The index of the bookmark
+   */
+  setBookmarkEditMode(evn, index: number): void {
     this.bookmark.link = this.bookmarks[index].link;
     this.bookmark.title = this.bookmarks[index].title;
     this.bookmark.ix = index;
+
     this.bookmarkEditing = true;
-    Evn.preventDefault();
+    evn.preventDefault();
   }
 
-  bookmarkRemove = (Evn, index: number): void => {
-    this.bookmarks.splice(index, 1);
-    localStorage.setItem('bookmarks', JSON.stringify(this.bookmarks));
-    this.resetBookmark();
+  /**
+   * Removes a bookmark
+   *
+   * @param evn Event fired by the triggering element
+   * @param index The index of the bookmark
+   */
+  removeBookmark(evn: MouseEvent | KeyboardEvent, index: number): void {
     this.bookmarkEditing = false;
-    Evn.preventDefault();
+
+    this.bookmarks.splice(index, 1);
+    this.bookmarkStorage = this.bookmarks;
+
+    this.resetBookmark();
+    evn.preventDefault();
   }
 
-  resetBookmark = (): void => {
-    this.bookmark = {
-      link: '',
-      title: '',
-    };
+  /**
+   * Reset the Bookmark currently in edit mode
+   */
+  resetBookmark(): void {
+    this.bookmark = new Bookmark();
   }
 
-  private getBookmarks = (): void => {
-    if (!localStorage.getItem('bookmarks')) {
-      localStorage.setItem('bookmarks', JSON.stringify([]));
+  /**
+   * Load stored bookmarks
+   */
+  private getBookmarks(): void {
+    if (!this.bookmarkStorage) {
+      this.bookmarkStorage = [];
     }
 
-    this.bookmarks = JSON.parse(localStorage.getItem('bookmarks'));
+    this.bookmarks = this.bookmarkStorage;
   }
 
-  ngOnInit(): void {
-    this.volume = this.getVolume();
-    this.twitch.onlineStream$.subscribe((stream) => this.streams.push(stream));
-
-    if (localStorage.getItem('twitch_user_token')) {
-      const sub: Subscription = this.twitch.getUser()
-        .subscribe(Response => {
-          this.twitchAccount = Response;
-          this.twitch.getOnlineFollwing();
-        }, () => localStorage.removeItem('twitch_user_token'), () => sub.unsubscribe());
-    }
-
-    this.getBookmarks();
+  /**
+   * Set CSS variables for width and hight on the body, used in CSS caluclations
+   */
+  private setBodyCssVars(): void {
+    document.body.style.setProperty('--innerWidth', `${window.innerWidth}px`);
+    document.body.style.setProperty('--innerHeight', `${window.innerHeight}px`);
   }
 }
+
+

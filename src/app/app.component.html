@@ -17,6 +17,7 @@
   </div>
 </div>
 
+<!-- Bookmarks Section -->
 <div class="ntBody">
   <div class="ntContainer">
     <div class="ntContainerTitle">{{langua.g('bookmarks')}}</div>
@@ -33,7 +34,7 @@
           <div class="ntBookmarkLink">{{bookmark.link | uppercase}}</div>
         </div>
         <div class="ntBookmarkOptions">
-          <button (click)="bookmarkEdit($event, i)" class="ntBookmarkOptionButton">
+          <button (click)="setBookmarkEditMode($event, i)" class="ntBookmarkOptionButton">
             <i class="material-icons">settings</i>
           </button>
         </div>
@@ -42,11 +43,12 @@
     <div class="ntNote" *ngIf="!bookmarks?.length">{{langua.g('no_bookmarks')}}</div>
   </div>
 
+<!-- Stream List Section -->
   <div class="ntContainer">
     <div class="ntContainerTitle">{{langua.g('streams')}}</div>
     <div class="ntVolumeControl">
       <span>{{langua.g('popup_volume')}}</span>
-      <input type="number" [value]="volume" (input)="setVolume($event.target.value)" (blur)="setVolume($event.target.value)" [max]="100" [min]="0" step="1">
+      <input type="number" [(value)]="volume" (blur)="volume = $event.target.value" [max]="100" [min]="0" step="1">
       <span></span>
     </div>
     <div class="ntBlockList" *ngIf="streams.length">
@@ -83,49 +85,32 @@
   </div>
 </div>
 
-<div class="ntPopup" [class.visible]="bookmarkCreation">
+<!-- Bookmark Update or Create Section -->
+<div class="ntPopup" [class.visible]="bookmarkCreation || bookmarkEditing">
   <button class="ntPopupClose" (click)="bookmarkCreation = false; resetBookmark()">
     <i class="material-icons">close</i>
   </button>
   <div class="ntPopupBody">
-    <div class="ntPopupTitle">{{langua.g('add_new_bookmark')}}</div>
+    <div *ngIf="bookmarkCreation" class="ntPopupTitle">{{langua.g('add_new_bookmark')}}</div>
+    <div *ngIf="bookmarkEditing" class="ntPopupTitle">{{langua.g('edit_bookmark')}}</div>
+
     <div class="ntPopupForm">
       <div class="ntPopupFieldSet">
-        <label for="bookmarkTitleCreate" [class.ng-invalid]="bookmarkTitleCreate?.invalid" title="{{langua.g('required')}}" class="ntPopupLabel">{{langua.g('new_bookmark_title')}}</label>
-        <input class="ntPopupInput" type="text" #bookmarkTitleCreate id="bookmarkTitleCreate" required maxlength="32" [(ngModel)]="bookmark.title">
+        <label for="bookmarkTitle" [class.ng-invalid]="bookmarkTitle?.invalid" title="{{langua.g('required')}}" class="ntPopupLabel">{{langua.g('new_bookmark_title')}}</label>
+        <input class="ntPopupInput" type="text" #bookmarkTitle id="bookmarkTitle" required maxlength="32" [(ngModel)]="bookmark.title">
       </div>
+
       <div class="ntPopupFieldSet">
-        <label for="bookmarkLinkCreate" [class.ng-invalid]="bookmarkLinkCreate?.invalid" title="{{langua.g('required')}}" class="ntPopupLabel">{{langua.g('new_bookmark_link')}}</label>
-        <input class="ntPopupInput" type="text" #bookmarkLinkCreate id="bookmarkLinkCreate" required [(ngModel)]="bookmark.link">
+        <label for="bookmarkLink" [class.ng-invalid]="bookmarkLink?.invalid" title="{{langua.g('required')}}" class="ntPopupLabel">{{langua.g('new_bookmark_link')}}</label>
+        <input class="ntPopupInput" type="text" #bookmarkLink id="bookmarkLink" required [(ngModel)]="bookmark.link">
       </div>
+
       <div class="ntPopupControls">
-        <button class="ntPopupButton cancel" (click)="bookmarkCreation = false; resetBookmark()">{{langua.g('popup_cancel')}}</button>
-        <button class="ntPopupButton" [disabled]="!bookmarkTitleCreate?.value?.length || !bookmarkLinkCreate?.value?.length" (click)="createBookmark()">{{langua.g('popup_confirm')}}</button>
+        <button class="ntPopupButton delete" (click)="removeBookmark($event, bookmark.ix)" *ngIf="bookmarkEditing">{{langua.g('popup_delete')}}</button>
+        <button class="ntPopupButton cancel" (click)="bookmarkCreation = bookmarkCreation = false; resetBookmark()">{{langua.g('popup_cancel')}}</button>
+        <button class="ntPopupButton" [disabled]="!bookmarkTitle?.value?.length || !bookmarkLink?.value?.length" (click)="updateOrCreateBookmark(bookmark?.ix)">{{langua.g('popup_confirm')}}</button>
       </div>
     </div>
   </div>
 </div>
 
-<div class="ntPopup" [class.visible]="bookmarkEditing">
-  <button class="ntPopupClose" (click)="bookmarkEditing = false; resetBookmark()">
-    <i class="material-icons">close</i>
-  </button>
-  <div class="ntPopupBody">
-    <div class="ntPopupTitle">{{langua.g('edit_bookmark')}}</div>
-    <div class="ntPopupForm">
-      <div class="ntPopupFieldSet">
-        <label for="bookmarkTitleEdit" [class.ng-invalid]="bookmarkTitleEdit?.invalid" title="{{langua.g('required')}}" class="ntPopupLabel">{{langua.g('new_bookmark_title')}}</label>
-        <input class="ntPopupInput" type="text" #bookmarkTitleEdit id="bookmarkTitleEdit" required maxlength="32" [(ngModel)]="bookmark.title">
-      </div>
-      <div class="ntPopupFieldSet">
-        <label for="bookmarkLinkEdit" [class.ng-invalid]="bookmarkLinkEdit?.invalid" title="{{langua.g('required')}}" class="ntPopupLabel">{{langua.g('new_bookmark_link')}}</label>
-        <input class="ntPopupInput" type="text" #bookmarkLinkEdit id="bookmarkLinkEdit" required [(ngModel)]="bookmark.link">
-      </div>
-      <div class="ntPopupControls">
-        <button class="ntPopupButton delete" (click)="bookmarkRemove($event, bookmark.ix)">{{langua.g('popup_delete')}}</button>
-        <button class="ntPopupButton cancel" (click)="bookmarkEditing = false; resetBookmark()">{{langua.g('popup_cancel')}}</button>
-        <button class="ntPopupButton" [disabled]="!bookmarkTitleEdit?.value?.length || !bookmarkLinkEdit?.value?.length" (click)="saveEditBookmark()">{{langua.g('popup_confirm')}}</button>
-      </div>
-    </div>
-  </div>
-</div>

@@ -10,8 +10,9 @@
         "exclude": []
     },
     "rules": {
+        "template-i18n": [true, "check-id"],
         "array-type": false,
-        "arrow-parens": false,
+        "arrow-parens": true,
         "deprecation": {
             "severity": "warn"
         },
@@ -26,15 +27,20 @@
             280
         ],
         "member-ordering": [
-            true,
-            {
-                "order": [
-                "static-field",
-                "instance-field",
-                "static-method",
-                "instance-method"
-                ]
-            }
+          true,
+          {
+            "order": [
+              "public-static-field",
+              "public-instance-field",
+              "private-static-field",
+              "private-instance-field",
+              "public-constructor",
+              "private-constructor",
+              "public-instance-method",
+              "protected-instance-method",
+              "private-instance-method"
+            ]
+          }
         ],
         "no-consecutive-blank-lines": false,
         "no-console": [
@@ -113,9 +119,11 @@
         "no-string-literal": false,
         "increment-decrement": false,
         "binary-expression-operand-order": false,
+        "no-bitwise": false,
         "no-conditional-assignment": false,
         "prefer-conditional-expression": true,
         "strict-boolean-expressions": false,
+        "indent": [true, "spaces", 2],
         "whitespace": [
             true,
             "check-branch",
