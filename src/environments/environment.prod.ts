@@ -1,5 +1,5 @@
 export const environment = {
-  production: true
+  production: true,
 };
 
 export const app_url = 'https://newtab.lubjan.net/';

@@ -10,60 +10,85 @@ import { app_key, app_url } from '../../../environments/environment';
 })
 export class TwitchService {
 
+  /**
+   * Get or Set whether the page is in authenthication mode for a Twitch Client
+   */
+  get authInProcess(): boolean {
+    return JSON.parse(localStorage.getItem('twitchAuthInProcess'));
+  }
+  set authInProcess(state: boolean) {
+    localStorage.setItem('twitchAuthInProcess', JSON.stringify(state));
+  }
+
+  /**
+   * Get or Set the Twitch User auth token
+   */
+  get userToken(): string {
+    return localStorage.getItem('twitch_user_token');
+  }
+  set userToken(val: string) {
+    localStorage.setItem('twitch_user_token', val);
+  }
+
   onlineStream$: Subject<Stream> = new Subject();
 
+  /**
+   * Get the Request Headers with OAuth Token of the User
+   */
+  private get headers(): any {
+    return {
+      Accept: 'application/vnd.twitchtv.v5+json',
+      'Client-ID': app_key,
+      Authorization: `OAuth ${this.userToken}`,
+    };
+  }
+
+  /**
+   * Permissions to request from the user
+   */
   private scopes: string[] = [
     'user_read',
   ];
 
-  private headers = {
-    Accept: 'application/vnd.twitchtv.v5+json',
-    'Client-ID': app_key,
-    Authorization: `OAuth ${localStorage.getItem('twitch_user_token')}`,
-  };
-
-  constructor(
-    private http: HttpClient,
-  ) {
-    if (localStorage.getItem('twitchAuthInProcess')) {
-      if (-1 !== location.hash.indexOf('access_token')) {
-        const access_token: string = new RegExp(/#?access_token=(\w+)/gi).exec(location.hash)[1];
-        this.saveUserInfo(access_token);
+  constructor(private http: HttpClient) {
+    if (this.authInProcess) {
+      if (~location.hash.indexOf('access_token')) {
+        this.saveUserInfo();
       } else {
         localStorage.removeItem('twitchAuthInProcess');
       }
     }
   }
 
-  sendAuthRequest = (): void => {
-    localStorage.setItem('twitchAuthInProcess', JSON.stringify(true));
+  /**
+   * Sets the page into authMode and sends the User to the Twitch permission cofnirmation page
+   */
+  authUser(): void {
+    this.authInProcess = true;
     location.href = `https://id.twitch.tv/oauth2/authorize?client_id=${app_key}&redirect_uri=${app_url}&response_type=token&scope=${this.scopes.join(' ')}`;
   }
 
-  getUser = (): Observable<any> => {
-    return this.http.get('https://api.twitch.tv/kraken/user', {
-      headers: this.headers,
-    });
+  /**
+   * Returns the Account object for the authethicated Twitch User
+   */
+  getUser(): Observable<any> {
+    return this.http.get('https://api.twitch.tv/kraken/user', { headers: this.headers });
   }
 
-  getOnlineFollwing = (): void => {
+  /**
+   * Get all (up to 100) online following channels for the authethicated Twitch User
+   */
+  getOnlineFollwing(): void {
     this.http.get(`https://api.twitch.tv/kraken/streams/followed/?limit=100`, { headers: this.headers })
-      .subscribe((res: {streams: Stream[]}) => {
-        for (const stream of res.streams) {
-          this.onlineStream$.next(stream);
-        }
-      });
+      .subscribe((res: {streams: Stream[]}) => res.streams.forEach((stream) => this.onlineStream$.next(stream)));
   }
 
-  private saveUserInfo = (access_token: string): void => {
-    localStorage.setItem('twitch_user_token', access_token);
-    localStorage.removeItem('twitchAuthInProcess');
+  /**
+   * Stores the User auth Token in the localStorage
+   */
+  private saveUserInfo(): void {
+    this.userToken = new RegExp(/#?access_token=(\w+)/gi).exec(location.hash)[1];
+
     location.hash = '';
-    this.headers = {
-      Accept: 'application/vnd.twitchtv.v5+json',
-      'Client-ID': app_key,
-      Authorization: `OAuth ${localStorage.getItem('twitch_user_token')}`,
-    };
   }
-
 }

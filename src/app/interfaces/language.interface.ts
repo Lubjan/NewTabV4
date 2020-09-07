@@ -1,4 +1,10 @@
+export type LanguageIds = string | 'en' | 'de';
+
 export interface Language {
-    id: string | 'en' | 'de';
-    display: string | 'English' | 'German';
+  id: LanguageIds;
+  display: string | 'English' | 'German';
 }
+
+export type Languages = {
+  [k in LanguageIds]: Language;
+};
