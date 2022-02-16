@@ -4,7 +4,7 @@ import { takeUntil } from 'rxjs/operators';
 
 import { Bookmark } from './classes/bookmark.class';
 import { Stream } from './interfaces/stream.interface';
-import { Account } from './interfaces/twitch.interface';
+import { User } from './interfaces/user.interface';
 import { LanguaService } from './services/langua/langua.service';
 import { TwitchService } from './services/twitch/twitch.service';
 
@@ -49,7 +49,7 @@ export class AppComponent implements OnInit, OnDestroy {
 
   bookmarks: Bookmark[] = [];
   streams: Stream[] = [];
-  twitchAccount: Account;
+  twitchAccount: User;
 
   twitchDropdown = false;
   languageDropdown = false;
@@ -76,8 +76,11 @@ export class AppComponent implements OnInit, OnDestroy {
         .pipe(takeUntil(this.destroy$))
         .subscribe(
           (res) => {
-            this.twitchAccount = res;
-            this.twitch.getOnlineFollwing();
+            if (!res?.data?.length) {
+              this.twitch.userToken = null;
+            }
+            this.twitchAccount = res.data[0];
+            this.twitch.getOnlineFollwing(this.twitchAccount.id);
           },
           () => localStorage.removeItem('twitch_user_token'),
         );

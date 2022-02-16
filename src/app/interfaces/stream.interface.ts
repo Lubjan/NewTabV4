@@ -1,45 +1,41 @@
 export interface Stream {
   _id: number;
-  game: string;
-  broadcast_platform: string;
-  community_id: any;
-  community_ids: number[];
-  viewers: number;
-  video_height: number;
   average_fps: number;
-  delay: number;
-  created_at: string;
-  is_playlist: boolean;
-  stream_type: string;
-  preview: {
-    small: string;
-    medium: string;
-    large: string;
-    template: string
-  };
   channel: {
-    mature: boolean;
-    status: string;
+    _id: number;
     broadcaster_language: string;
-    broadcaster_software: string;
+    created_at: string;
     display_name: string;
+    followers: number;
     game: string;
     language: string;
-    _id: number;
-    name: string;
-    created_at: string;
-    updated_at: string;
-    partner: boolean;
     logo: string;
-    video_banner: string;
+    mature: boolean;
+    name: string;
+    partner: boolean;
     profile_banner: string;
     profile_banner_background_color: string;
+    status: string;
+    updated_at: string;
     url: string;
+    video_banner: string;
     views: number;
-    followers: number;
-    broadcaster_type: string;
-    description: string;
-    private_video: boolean;
-    privacy_options_enabled: boolean
   };
+  created_at: string;
+  delay: number;
+  game: string;
+  is_playlist: boolean;
+  preview: {
+    large: string;
+    medium: string;
+    small: string;
+    template: string;
+  };
+  video_height: number;
+  viewers: number;
+
+}
+
+export interface Streams {
+  data: Stream[];
 }

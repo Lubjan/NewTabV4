@@ -1,7 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
-import { Stream } from 'src/app/interfaces/stream.interface';
+import { Stream, Streams } from 'src/app/interfaces/stream.interface';
+import { Users } from 'src/app/interfaces/user.interface';
 
 import { app_key, app_url } from '../../../environments/environment';
 
@@ -39,7 +40,8 @@ export class TwitchService {
     return {
       Accept: 'application/vnd.twitchtv.v5+json',
       'Client-ID': app_key,
-      Authorization: `OAuth ${this.userToken}`,
+      // Authorization: `OAuth ${this.userToken}`,
+      Authorization: `Bearer ${this.userToken}`,
     };
   }
 
@@ -47,7 +49,8 @@ export class TwitchService {
    * Permissions to request from the user
    */
   private scopes: string[] = [
-    'user_read',
+    'user:read:email',
+    'user:read:follows',
   ];
 
   constructor(private http: HttpClient) {
@@ -71,16 +74,16 @@ export class TwitchService {
   /**
    * Returns the Account object for the authethicated Twitch User
    */
-  getUser(): Observable<any> {
-    return this.http.get('https://api.twitch.tv/kraken/user', { headers: this.headers });
+  getUser(): Observable<Users> {
+    return this.http.get<Users>('https://api.twitch.tv/helix/users', { headers: this.headers });
   }
 
   /**
    * Get all (up to 100) online following channels for the authethicated Twitch User
    */
-  getOnlineFollwing(): void {
-    this.http.get(`https://api.twitch.tv/kraken/streams/followed/?limit=100`, { headers: this.headers })
-      .subscribe((res: {streams: Stream[]}) => res.streams.forEach((stream) => this.onlineStream$.next(stream)));
+  getOnlineFollwing(id: string): void {
+    this.http.get(`https://api.twitch.tv/helix/users/follows?from_id=${id}&limit=100`, { headers: this.headers })
+      .subscribe((res: Streams) => res.data?.forEach((stream) => this.onlineStream$.next(stream)));
   }
 
   /**

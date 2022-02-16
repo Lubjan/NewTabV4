@@ -2,7 +2,7 @@
   <div class="ntLogo">NEWTAB</div>
   <div class="ntNavButtons" (mouseleave)="languageDropdown = false; twitchDropdown = false">
     <button class="ntTwitchLogin" (click)="authTwitch()" *ngIf="!twitchAccount">{{langua.g('connectTwitch')}}</button>
-    <button class="ntTwitchAvatar" *ngIf="twitchAccount" [style.backgroundImage]="'url('+twitchAccount.logo+')'" (click)="twitchDropdown = !twitchDropdown">
+    <button class="ntTwitchAvatar" *ngIf="twitchAccount" [style.backgroundImage]="'url('+twitchAccount.profile_image_url+')'" (click)="twitchDropdown = !twitchDropdown">
       <div class="ntDropdown" [class.visible]="twitchDropdown">
         <button class="ntSelectableValue" (click)="twitchLogout()">{{langua.g('twitch_logout')}}</button>
       </div>

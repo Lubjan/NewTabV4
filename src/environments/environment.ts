@@ -7,7 +7,7 @@ export const environment = {
 };
 
 export const app_url = 'http://localhost:4200/';
-export const app_key = '<yout-twitch-client-id>';
+export const app_key = 'uaxgksos3n0ed91cgdkon5soqnbhfl';
 
 /*
  * For easier debugging in development mode, you can import the following file
