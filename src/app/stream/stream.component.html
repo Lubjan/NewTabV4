@@ -1,0 +1,33 @@
+<img class="n-stream-bg" [src]="stream.thumbnail_url | size:640:360">
+
+<!---->
+
+<div class="n-stream-profile">
+  <img [src]="stream.profile_image_url" *ngIf="stream.profile_image_url" class="n-stream-profile-avatar">
+  <span class="n-stream-profile-name">{{stream.user_name}}</span>
+</div>
+
+<!---->
+
+<div class="n-stream-info">
+  <div class="n-stream-info-title">{{stream.title}}</div>
+  <div class="n-stream-info-game" *ngIf="stream.game_name">
+    <i class="material-icons">gamepad</i>
+    <span>{{stream.game_name}}</span>
+  </div>
+  <div class="n-stream-info-viewcount">
+    <i class="material-icons">visibility</i>
+    <span>{{stream.viewer_count}}</span>
+  </div>
+  <div class="n-stream-info-date">
+    <i class="material-icons">schedule</i>
+    <span>{{stream.started_at | toDate | timeAgo}}</span>
+  </div>
+</div>
+
+<!---->
+
+<div class="n-stream-controls">
+  <button (click)="popoutStream()"><span>Stream</span><i class="material-icons">launch</i></button>
+  <button (click)="popoutChat()"><span>Chat</span><i class="material-icons">launch</i></button>
+</div>

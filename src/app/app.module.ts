@@ -5,10 +5,18 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgPipesModule } from 'ngx-pipes';
 
 import { AppComponent } from './app.component';
+import { BookmarkComponent } from './bookmark/bookmark.component';
+import { SizePipe } from './pipes/size.pipe';
+import { StreamComponent } from './stream/stream.component';
+import { ToDatePipe } from './to-date.pipe';
 
 @NgModule({
   declarations: [
     AppComponent,
+    SizePipe,
+    BookmarkComponent,
+    StreamComponent,
+    ToDatePipe,
   ],
   imports: [
     BrowserModule,

@@ -1,0 +1,13 @@
+<a [href]="bookmark?.link">
+  <div class="n-bookmark-title">
+    <img [src]="bookmark?.favIcon" *ngIf="bookmark?.favIcon">
+    <img [src]="bookmark?.partedLink?.protocol + bookmark?.partedLink?.origin + '/favicon.ico'" *ngIf="!bookmark?.favIcon && !bookmark?.noFavIconIco" (error)="bookmark.noFavIconIco = true">
+    <img [src]="bookmark?.partedLink?.protocol + bookmark?.partedLink?.origin + '/favicon.png'" *ngIf="!bookmark?.favIcon && bookmark?.noFavIconIco && !bookmark?.noFavIconPng" (error)="bookmark.noFavIconPng = true">
+    <span>{{bookmark?.title}}</span>
+  </div>
+  <div class="n-bookmark-url" *ngIf="!bookmark?.hideLink">
+    <div class="n-bookmark-url-protocol">{{bookmark?.partedLink?.protocol}}</div>
+    <div class="n-bookmark-url-origin">{{bookmark?.partedLink?.origin}}</div>
+    <div class="n-bookmark-url-path" *ngIf="bookmark?.partedLink?.path">{{bookmark?.partedLink?.path}}</div>
+  </div>
+</a>

@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
 import { Stream, Streams } from 'src/app/interfaces/stream.interface';
@@ -10,26 +10,14 @@ import { app_key, app_url } from '../../../environments/environment';
   providedIn: 'root',
 })
 export class TwitchService {
+  get authInProcess(): boolean { return JSON.parse(localStorage.getItem('twitchAuthInProcess')); }
+  get userToken(): string { return localStorage.getItem('twitch_user_token'); }
 
-  /**
-   * Get or Set whether the page is in authenthication mode for a Twitch Client
-   */
-  get authInProcess(): boolean {
-    return JSON.parse(localStorage.getItem('twitchAuthInProcess'));
-  }
-  set authInProcess(state: boolean) {
-    localStorage.setItem('twitchAuthInProcess', JSON.stringify(state));
-  }
+  /** Get or Set whether the page is in authenthication mode for a Twitch Client */
+  set authInProcess(state: boolean) { localStorage.setItem('twitchAuthInProcess', JSON.stringify(state)); }
 
-  /**
-   * Get or Set the Twitch User auth token
-   */
-  get userToken(): string {
-    return localStorage.getItem('twitch_user_token');
-  }
-  set userToken(val: string) {
-    localStorage.setItem('twitch_user_token', val);
-  }
+  /** Get or Set the Twitch User auth token */
+  set userToken(val: string) { localStorage.setItem('twitch_user_token', val); }
 
   onlineStream$: Subject<Stream> = new Subject();
 
@@ -38,10 +26,11 @@ export class TwitchService {
    */
   private get headers(): any {
     return {
+      /* eslint-disable @typescript-eslint/naming-convention */
       Accept: 'application/vnd.twitchtv.v5+json',
       'Client-ID': app_key,
-      // Authorization: `OAuth ${this.userToken}`,
       Authorization: `Bearer ${this.userToken}`,
+      /* eslint-enable @typescript-eslint/naming-convention */
     };
   }
 
@@ -82,8 +71,15 @@ export class TwitchService {
    * Get all (up to 100) online following channels for the authethicated Twitch User
    */
   getOnlineFollwing(id: string): void {
-    this.http.get(`https://api.twitch.tv/helix/users/follows?from_id=${id}&limit=100`, { headers: this.headers })
-      .subscribe((res: Streams) => res.data?.forEach((stream) => this.onlineStream$.next(stream)));
+    this.http.get(`https://api.twitch.tv/helix/streams/followed?user_id=${id}&first=100`, { headers: this.headers }).subscribe((res: Streams) => {
+      const params = new HttpParams().appendAll({ id: res.data?.map((stream) => stream.user_id) });
+        this.http.get<Users>(`https://api.twitch.tv/helix/users`, { params, headers: this.headers }).subscribe((users) => {
+          res.data?.forEach((stream) => this.onlineStream$.next({
+            ...stream,
+            profile_image_url: users?.data?.find((user) => user.id === stream.user_id).profile_image_url,
+          }));
+        });
+    });
   }
 
   /**

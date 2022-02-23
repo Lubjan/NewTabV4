@@ -1,0 +1,127 @@
+:host {
+  position: relative;
+  display: block;
+  color: #fff;
+  overflow: hidden;
+  border-radius: 0.75rem;
+}
+
+.n-stream-bg {
+  width: 100%;
+  display: flex;
+}
+
+.n-stream-profile {
+  position: absolute;
+  top: .5rem;
+  left: .5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: .5rem;
+  font-weight: 600;
+  text-shadow: 0 0 0.25rem #000, 0 0 0.75rem rgb(0 0 0 / 50%);
+  font-size: 1.25em;
+}
+
+.n-stream-profile img {
+  border-radius: 2rem;
+  width: 3.5rem;
+  background-color: #26354d;
+  box-shadow: 0 0 2.5rem -0.5rem #000;
+}
+
+.n-stream-info {
+  transition: all ease .2s;
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(to top, hsl(243deg 25% 13%), transparent);
+  padding: 7rem 1rem 1rem;
+  font-size: 1.25em;
+  font-weight: 500;
+  line-height: 1.25;
+  opacity: 0;
+  user-select: none;
+  transform: translateY(100%);
+  color: #e4e3ff;
+}
+
+:host:hover .n-stream-info {
+  opacity: 1;
+  transform: translateY(0%);
+}
+
+.n-stream-controls {
+  transition: all ease .2s;
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  display: flex;
+  flex-flow: column;
+  gap: 0.5rem;
+  transform: translateX(100%);
+  opacity: 0;
+}
+
+.n-stream-controls button {
+  transition: all ease .2s;
+  padding: 0;
+  flex: auto 1 0;
+  border: none;
+  background: rgb(132 128 218 / 35%);
+  font-family: var(--poppins);
+  padding: 0 0.75rem;
+  font-size: .9em;
+  font-weight: 500;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-left: auto;
+  border-radius: 0.75rem;
+  gap: 0.25rem;
+  color: #e4e3ff;
+  backdrop-filter: blur(3px);
+  height: 2.5rem;
+  cursor: pointer;
+}
+
+.n-stream-controls button:is(:hover, :focus) {
+  transition: all ease .2s;
+  background: rgba(110, 106, 190, 0.45);
+}
+
+:host:hover .n-stream-controls {
+  transform: translateX(0%);
+  opacity: 1;
+}
+
+.n-stream-info {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem 1rem;
+}
+
+.n-stream-info-title {
+  font-weight: 700;
+  font-size: 1.125em;
+}
+
+.n-stream-info-viewcount,
+.n-stream-info-game,
+.n-stream-info-date {
+  display: inline-flex;
+  flex: auto 0 0;
+  align-items: center;
+  gap: 0.5rem;
+  width: calc(50% - .5rem);
+}
+
+:is(.n-stream-info-viewcount,
+.n-stream-info-game,
+.n-stream-info-date) span {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
