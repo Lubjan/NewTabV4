@@ -5,7 +5,6 @@ import { takeUntil } from 'rxjs/operators';
 import { Bookmark } from './classes/bookmark.class';
 import { Stream } from './interfaces/stream.interface';
 import { User } from './interfaces/user.interface';
-import { LanguaService } from './services/langua/langua.service';
 import { TwitchService } from './services/twitch/twitch.service';
 
 @Component({
@@ -48,7 +47,7 @@ export class AppComponent implements OnInit, OnDestroy {
 
   private destroy$: Subject<void> = new Subject();
 
-  constructor(public langua: LanguaService, public twitch: TwitchService) {
+  constructor(public twitch: TwitchService) {
     document.body.classList.add(this.selectedTheme);
 
     this.setBodyCssVars();
